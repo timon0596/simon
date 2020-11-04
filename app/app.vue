@@ -1,7 +1,7 @@
 <template lang='pug'>
 .main
   .buttons
-    .button(v-for='(button,index) in buttons' :class='button' :key='index')
+    .button(v-for='(button,index) in buttons' :class='button' :key='index' @click='onClick(index)')
 </template>
 <script>
 export default{
@@ -14,21 +14,25 @@ export default{
       clientSequence:[],
       buttonsElements: [],
       promises:[],
-      delay: 1
+      delay: 1,
+      isWrong:false
     }
   },
   methods:{
     generateSequence(){
       this.sequence=[]
+      this.clientSequence=[]
       for(let i =0;i<this.round;i++){
         this.sequence.push(this.rand())
       }
+      console.log(this.sequence)
     },
     rand(){
       return Math.round(Math.random()*3)
     },
-    onClick(){
-
+    onClick(i){
+      this.clientSequence.push(i)
+      this.isWrong=this.clientSequence.some((el,i)=>el!==this.sequence[i])
     },
     execSequence(){
       this.sequence.forEach((el,i)=>{ 
@@ -41,15 +45,13 @@ export default{
 
             this.buttonsElements[el].classList.remove('button_active')
 
-            res()
+            setTimeout(()=>{res()},this.delay*1000/2)
 
-          },this.delay*1000)
+          },this.delay*1000/2)
         })
         this.promises.push(promise)
       })
-      // this.promises.reduce((acc,current)=>acc.then(()=>current()))
-
-      console.log(this.promises.reduce((acc,current)=>acc.then(current),Promise.resolve()))
+      this.promises.reduce((acc,current)=>acc.then(current),Promise.resolve())
       
     }
   },
@@ -75,8 +77,9 @@ export default{
     .button
       width: 50%
       height: 50%
-      opacity: .7
+      opacity: .5
       cursor: pointer
+      transition: opacity .2s ease
       &_active
         opacity: 1
     .r
