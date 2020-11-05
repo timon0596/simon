@@ -19,6 +19,13 @@
       |сложно
 </template>
 <script>
+  const notes = [
+    new Audio('./do.wav'),
+    new Audio('./re.wav'),
+    new Audio('./mi.wav'),
+    new Audio('./fa.wav')
+  ]
+  
 export default{
   data(){
     return {
@@ -33,12 +40,14 @@ export default{
       isWrong:false,
       isPending:false,
       stopped:false,
-      isChecking:false
+      isChecking:false,
+      notes
     }
   },
   methods:{
     restart(){
       this.stopped=true
+      this.isChecking=false
       this.round=1
     },
     start(){
@@ -62,7 +71,15 @@ export default{
     rand(){
       return Math.round(Math.random()*3)
     },
+    execSound(i){
+      this.notes.forEach((el)=>{
+        el.pause()
+        el.currentTime = 0
+      })
+      this.notes[i].play()
+    },
     onClick(i){
+      this.execSound(i)
       if(this.isPending||this.isWrong||!this.isChecking) return
         this.clientSequence.push(i)
         this.isWrong=this.clientSequence.some((el,i)=>el!==this.sequence[i])
@@ -87,7 +104,7 @@ export default{
             return
           }
           this.buttonsElements[el].classList.add('button_active')
-
+          this.execSound(el)
           setTimeout(()=>{
 
             this.buttonsElements[el].classList.remove('button_active')
