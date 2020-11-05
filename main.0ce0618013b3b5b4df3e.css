@@ -1,0 +1,61 @@
+.main {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  grid-gap: 5px;
+}
+.main .buttons {
+    width: 500px;
+    height: 500px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.main .buttons .button {
+      width: 50%;
+      height: 50%;
+      opacity: .5;
+      cursor: pointer;
+      transition: opacity .1s ease;
+}
+.main .buttons .button:hover {
+        opacity: .6;
+}
+.main .buttons .button:active {
+        opacity: 1;
+}
+.main .buttons .button_active {
+        opacity: 1;
+}
+.main .buttons .r {
+      background: red;
+}
+.main .buttons .g {
+      background: green;
+}
+.main .buttons .b {
+      background: blue;
+}
+.main .buttons .o {
+      background: orange;
+}
+.main .controls {
+    display: grid;
+    grid-gap: 5px;
+}
+.main .control {
+    padding: 10px 20px;
+    border: 1px solid green;
+    color: green;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.main .control:active {
+      opacity: .5;
+}
+.main .control_error {
+      border-color: red;
+      color: red;
+}
+
