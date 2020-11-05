@@ -2,17 +2,28 @@
 .main
   .buttons
     .button(v-for='(button,index) in buttons' :class='button' :key='index' @click='onClick(index)')
-  .start(@click='start') start
-  .start(@click='stop') stop
-  .start {{round}}
-  .start(v-if='isWrong') game over
+  .controls
+    .control(@click='start') start
+    .control(@click='restart') restart
+    .control round : {{round}}
+    .control.control_error(v-if='isWrong') game over
+  .difficulty
+    label
+      <input type="radio" :value='+1.5' v-model='delay'>
+      |легко
+    label
+      <input type="radio" :value='+1' v-model='delay'>
+      |средне
+    label
+      <input type="radio" :value='+0.4' v-model='delay'>
+      |сложно
 </template>
 <script>
 export default{
   data(){
     return {
       buttons:['r','g','b','o'],
-      round:2,
+      round:1,
       finished:true,
       sequence:[],
       clientSequence:[],
@@ -22,21 +33,21 @@ export default{
       isWrong:false,
       isPending:false,
       stopped:false,
-      success:false,
       isChecking:false
     }
   },
   methods:{
-    stop(){
+    restart(){
       this.stopped=true
+      this.round=1
     },
     start(){
 
-      if(this.isPending) return
+      if(this.isPending||this.isChecking) return
       this.promises=[]
       this.clientSequence=[]
       this.stopped=false
-      this.isPending=true
+      
       this.isWrong=false
       this.generateSequence()
       this.execSequence()
@@ -54,19 +65,20 @@ export default{
     onClick(i){
       if(this.isPending||this.isWrong||!this.isChecking) return
         this.clientSequence.push(i)
-      if(this.clientSequence.length<this.sequence.length){
         this.isWrong=this.clientSequence.some((el,i)=>el!==this.sequence[i])
         if(this.isWrong){
           this.round=1
+          this.isChecking=false
+        }else if(this.clientSequence.length==this.sequence.length){
+
+          this.isChecking=false
+          this.round++  
         }
-      }else if(!this.isWrong){
-        this.success=true
-        this.isChecking=false
-        this.round++
-      }
+        
       
     },
     execSequence(){
+      this.isPending=true
       this.sequence.forEach((el,i)=>{ 
 
         const promise = ()=>new Promise((res,rej)=>{
@@ -108,9 +120,11 @@ export default{
 .main
   width: 100%
   min-height: 100vh
-  display: flex
+  display: grid
   justify-content: center
-  align-items: center
+  align-content: center
+  grid-gap: 5px
+
   .buttons
     width: 500px
     height: 500px
@@ -121,7 +135,11 @@ export default{
       height: 50%
       opacity: .5
       cursor: pointer
-      transition: opacity .2s ease
+      transition: opacity .1s ease
+      &:hover
+        opacity: .6
+      &:active
+        opacity: 1
       &_active
         opacity: 1
     .r
@@ -132,7 +150,10 @@ export default{
       background: blue
     .o
       background: orange
-  .start
+  .controls
+    display: grid
+    grid-gap: 5px
+  .control
     padding: 10px 20px
     border: 1px solid green
     color: green
@@ -140,4 +161,7 @@ export default{
     cursor: pointer
     &:active
       opacity: .5
+    &_error
+      border-color: red
+      color: red
 </style>
